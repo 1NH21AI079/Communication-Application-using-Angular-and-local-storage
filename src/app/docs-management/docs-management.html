@@ -1,1 +1,64 @@
-<p>docs-management works!</p>
+<div class="docs-management-container">
+    <div class="docs-header">
+        <h4 class="mb-3">Document Management</h4>
+        <div class="upload-section">
+            <label for="fileInput" class="btn btn-primary">
+                <i class="bi bi-upload"></i> Upload Document
+            </label>
+            <input type="file" id="fileInput" class="d-none" (change)="onFileSelected($event)" accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.png,.jpg,.jpeg,.gif,.bmp,.svg,.zip,.rar,.7z,.ppt,.pptx,.mp4,.avi,.mov,.mp3,.wav" />
+            <small class="text-muted ms-3">Supported: PDF, Excel, CSV, Images, and more (Max 10MB)</small>
+        </div>
+
+        <div *ngIf="uploadError()" class="alert alert-danger mt-2 py-2">
+            {{ uploadError() }}
+        </div>
+    </div>
+
+    <div class="filter-section mt-3 mb-3">
+        <label class="me-2">Filter by type:</label>
+        <select class="form-select d-inline-block w-auto" [value]="filterType()" (change)="filterType.set($any($event.target).value)">
+            <option value="all">All Files</option>
+            <option *ngFor="let type of getUniqueFileTypes()" [value]="type">
+                {{ type.toUpperCase() }}
+            </option>
+        </select>
+    </div>
+
+    <div *ngIf="getFilteredDocuments().length === 0" class="alert alert-info">
+        No documents uploaded yet. Click "Upload Document" to add files.
+    </div>
+
+    <div class="documents-grid" *ngIf="getFilteredDocuments().length > 0">
+        <div class="document-card" *ngFor="let doc of getFilteredDocuments()">
+            <div class="doc-icon">
+                {{ getFileIcon(doc.fileType) }}
+            </div>
+            <div class="doc-info">
+                <h6 class="doc-name" [title]="doc.fileName">{{ doc.fileName }}</h6>
+                <div class="doc-meta">
+                    <span class="badge bg-secondary">{{ doc.fileType.toUpperCase() }}</span>
+                    <span class="text-muted small">{{ formatFileSize(doc.fileSize) }}</span>
+                </div>
+                <div class="doc-details text-muted small mt-2">
+                    <div>Uploaded by: <strong>{{ doc.uploadedBy }}</strong></div>
+                    <div>Date: {{ doc.uploadDate | date:'short' }}</div>
+                </div>
+            </div>
+            <div class="doc-actions">
+                <button class="btn btn-sm btn-success" (click)="downloadDocument(doc)" title="Download">
+                    <i class="bi bi-download"></i> Download
+                </button>
+                <button class="btn btn-sm btn-danger" (click)="deleteDocument(doc.id)" title="Delete">
+                    <i class="bi bi-trash"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="docs-summary mt-4" *ngIf="documents().length > 0">
+        <div class="alert alert-light">
+            <strong>Total Documents:</strong> {{ documents().length }} |
+            <strong>Total Size:</strong> {{ formatFileSize(getTotalSize()) }}
+        </div>
+    </div>
+</div>

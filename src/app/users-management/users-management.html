@@ -1,1 +1,58 @@
-<p>users-management works!</p>
+<div class="users-mgmt-wrapper">
+    <h4 class="mb-3">Registered Users</h4>
+    <div *ngIf="loadError()" class="alert alert-danger py-2">{{ loadError() }}</div>
+    <div *ngIf="!loadError() && users().length === 0" class="alert alert-info py-2">No users registered yet.</div>
+
+    <div class="table-responsive" *ngIf="users().length > 0">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Full Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Password</th>
+                    <th scope="col" class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let u of users(); let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td>
+                        <ng-container *ngIf="editingId() === u.userId; else viewName">
+                            <input class="form-control form-control-sm" [value]="draftFullName()" (input)="draftFullName.set($any($event.target).value)" />
+                        </ng-container>
+                        <ng-template #viewName>
+                            <button class="btn btn-link p-0 text-primary text-decoration-none">{{ u.fullName }}</button>
+                        </ng-template>
+                    </td>
+                    <td>
+                        <div *ngIf="editingId() === u.userId; else viewEmail">
+                            <input type="email" class="form-control form-control-sm" [value]="draftEmail()" (input)="draftEmail.set($any($event.target).value)" />
+                        </div>
+                        <ng-template #viewEmail>
+                            <div>{{ u.email }}</div>
+                        </ng-template>
+                    </td>
+                    <td>
+                        <div *ngIf="editingId() === u.userId; else viewPassword">
+                            <input type="text" class="form-control form-control-sm" [value]="draftPassword()" (input)="draftPassword.set($any($event.target).value)" />
+                        </div>
+                        <ng-template #viewPassword>
+                            <div>{{ u.password }}</div>
+                        </ng-template>
+                    </td>
+                    <td class="text-center" style="width:160px">
+                        <div *ngIf="editingId() === u.userId; else actionsStatic">
+                            <button class="btn btn-sm btn-success me-1" (click)="saveEdit(u.userId)">Save</button>
+                            <button class="btn btn-sm btn-secondary" (click)="cancelEdit()">Cancel</button>
+                        </div>
+                        <ng-template #actionsStatic>
+                            <button class="btn btn-primary" (click)="startEdit(u)">Edit</button>
+                            <button *ngIf="!isCurrentUser(u.userId)" class="btn btn-danger" (click)="deleteUser(u.userId)">Delete</button>
+                        </ng-template>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

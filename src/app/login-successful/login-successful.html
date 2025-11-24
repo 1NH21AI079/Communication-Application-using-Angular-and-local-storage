@@ -1,1 +1,69 @@
-<p>login-successful works!</p>
+<div class="modal fade" id="loginSuccessModal" tabindex="-1" aria-labelledby="loginSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginSuccessModalLabel">Login Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ng-container *ngIf="userEmail(); else noUser">
+                    You are logged in as <strong>{{ userEmail() }}</strong>.
+                </ng-container>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #noUser>
+    <div class="alert alert-warning mt-3">No user info found. Please login again.</div>
+</ng-template>
+
+<div class="card-title" *ngIf="showDashboard()" class="container mt-5">
+    <div class="row g-4">
+        <div class="col-12">
+            <h3 class="text-center">Dashboard</h3>
+        </div>
+        <div class="col-3">
+            <div class="card shadow">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title">Group Chat</h5>
+                    <p class="card-text small">Discuss with other users.</p>
+                    <a routerLink="group-chat" routerLinkActive="active" class="btn btn-primary w-100">Open</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card shadow">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title">Manage Users</h5>
+                    <p class="card-text small">Add, edit, and view users.</p>
+                    <a routerLink="users-management" routerLinkActive="active" class="btn btn-primary w-100">Open</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card shadow">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title">Documents</h5>
+                    <p class="card-text small">Manage shared docs.</p>
+                    <a routerLink="docs-management" routerLinkActive="active" class="btn btn-primary w-100">Open</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card shadow">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title">Logout</h5>
+                    <p class="card-text small">End your session.</p>
+                    <a routerLink="logout" routerLinkActive="active" class="btn btn-danger w-100">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mt-4" *ngIf="showDashboard()">
+    <router-outlet></router-outlet>
+</div>

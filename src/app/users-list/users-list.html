@@ -1,20 +1,25 @@
 <div class="users-list">
-    <h2>Users</h2>
-    <input type="text" [value]="listFilter()" (input)="onFilterChange($event.target.value)" />
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let user of users | filteruser:listFilter()">
-                <td>{{ user.id }}</td>
-                <td>{{ user.name }}</td>
-                <td>{{ user.email }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <h4 class="mb-3">Users</h4>
+    <div class="mb-2 d-flex gap-2">
+        <input class="form-control form-control-sm" placeholder="Filter by name" [value]="listFilter" (input)="onFilterChange($event.target.value)" />
+        <button class="btn btn-sm btn-outline-secondary" (click)="loadUsers()">Refresh</button>
+    </div>
+    <div class="table-responsive" *ngIf="users().length > 0">
+        <table class="table table-sm table-striped table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let user of (users() | filteruser:listFilter)">
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.email }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>

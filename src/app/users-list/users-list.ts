@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FilteruserPipe } from '../filteruser-pipe';
 
@@ -9,15 +9,43 @@ import { FilteruserPipe } from '../filteruser-pipe';
   templateUrl: './users-list.html',
   styleUrls: ['./users-list.css'],
 })
-export class UsersList {
-  listFilter = signal<string>('');
-  users = [
-    { id: 1, name: 'John', email: 'John@gmail.com' },
-    { id: 2, name: 'Anna', email: 'anna@gmail.com' },
-    { id: 3, name: 'Pawan', email: 'pawan@gmail.com' }
-  ];
+export class UsersList implements OnInit {
+  listFilter: string = '';
+  users = signal<UserRow[]>([]);
+  loadError = signal<string | null>(null);
+
+  ngOnInit(): void {
+    this.loadUsers();
+  }
 
   onFilterChange(val: string) {
-    this.listFilter.set(val);
+    this.listFilter = val;
+  }
+
+  loadUsers(): void {
+    try {
+      this.loadError.set(null);
+      const raw = localStorage.getItem('users');
+      if (!raw) {
+        this.users.set([]);
+        return;
+      }
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        const mapped = parsed.map((u: any, idx: number) => ({
+          id: u.userId ?? idx + 1,
+          name: u.fullName ?? u.name ?? 'Unknown',
+          email: u.email ?? ''
+        }));
+        this.users.set(mapped);
+      } else {
+        this.users.set([]);
+      }
+    } catch {
+      this.loadError.set('Failed to parse users from storage');
+      this.users.set([]);
+    }
   }
 }
+
+interface UserRow { id: number; name: string; email: string; }
